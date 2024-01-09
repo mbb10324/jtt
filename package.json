@@ -1,5 +1,5 @@
 {
-	"name": "react-arca-template",
+	"name": "jtt",
 	"version": "0.0.1",
 	"main": "index.js",
 	"scripts": {
@@ -38,6 +38,7 @@
 	"dependencies": {
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"react-router-dom": "^6.16.0"
+		"react-router-dom": "^6.16.0",
+		"rsuite": "^5.49.0"
 	}
 }
