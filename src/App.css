@@ -8,6 +8,8 @@
 	min-height: 100vh;
 	height: 100%;
 	font-family: Arial, Helvetica, sans-serif;
+	max-width: 550px;
+	animation: fadeIn ease-in-out 0.8s;
 }
 
 .app h1 {
@@ -18,9 +20,48 @@
 	border-color: var(--rs-primary-900);
 }
 
+.rs-input-highlighted {
+	color: var(--rs-primary-500);
+}
+
 .rs-input:focus,
 .rs-input:hover {
 	border-color: var(--rs-border-primary) !important;
+	outline: none !important;
+}
+
+.icon-grid {
+	display: grid;
+	width: 100%;
+	align-items: center;
+	justify-items: center;
+	grid-template-columns: repeat(3, 1fr);
+	grid-gap: 10px;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.icon-grid-stack {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+}
+
+.store-btns {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	gap: 20px;
+	margin-top: 20px;
+	margin-bottom: 20px;
+}
+
+.custom-slider {
+	background-color: var(--rs-slider-bar);
+	width: 100%;
 }
 
 .fade-in {

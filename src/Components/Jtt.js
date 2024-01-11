@@ -1,140 +1,88 @@
-import { Button, ButtonGroup, Input, InputGroup, InputNumber, Panel, Stack } from "rsuite";
-import { roundValues, tipValues } from "../Utils/values";
-import { useState, useEffect } from "react";
+import { Button, ButtonGroup, CustomProvider, Input, InputGroup, InputNumber, Panel, Stack } from "rsuite";
+import useCalculateTip from "../Hooks/CalculateTip";
+import { localizations } from "../Utils/localizations";
+import useHandlers from "../Hooks/Handlers";
+import MoreIcon from "@rsuite/icons/More";
+import StoreBtns from "./StoreBtns";
+import IconBtns from "./IconBtns";
 import "rsuite/dist/rsuite.min.css";
+import { useState } from "react";
+import Menu from "./Menu";
 import Split from "./Split";
 
 export default function Jtt() {
-	const [split, setSplit] = useState(false);
+	// Local storage values
+	const localStorageLocalization = localStorage.getItem("localization") || "English";
+	const localStorageTheme = localStorage.getItem("theme") || "Dark";
+	// Util values
+	const [LO, setSelectedLocalization] = useState(localizations[localStorageLocalization.toLowerCase()]);
+	const [theme, setTheme] = useState(localStorageTheme);
+	const [showMenu, setShowMenu] = useState(false);
+	// Split values
+	const [showSplit, setShowSplit] = useState(false);
+	const [splitValue, setSplitValue] = useState(1);
+	// Input values
 	const [billTotal, setBillTotal] = useState("0.00");
 	const [tip, setTip] = useState(null);
 	const [total, setTotal] = useState(null);
+	// Tip percent values
 	const [tipPercent, setTipPercent] = useState(20);
 	const [customTipValue, setCustomTipValue] = useState(20);
+	// Button group selections
 	const [selectedTipPercent, setSelectedTipPercent] = useState("20%");
-	const [selectedTipRound, setSelectedTipRound] = useState("N/A");
-	const [selectedTotalRound, setSelectedTotalRound] = useState("N/A");
+	const [selectedTipRound, setSelectedTipRound] = useState(LO.roundValues[0]);
+	const [selectedTotalRound, setSelectedTotalRound] = useState(LO.roundValues[0]);
 
-	const styles = {
-		marginBottom: 10,
-	};
+	// Handler Custom Hook
+	const handle = useHandlers(
+		LO,
+		setShowSplit,
+		setSplitValue,
+		setBillTotal,
+		setTipPercent,
+		setCustomTipValue,
+		setSelectedTipPercent,
+		setSelectedTipRound,
+		setSelectedTotalRound
+	);
 
-	function formatToCurrency(value) {
-		const numericValue = value.replace(/[^\d]/g, "");
-		const cleanedValue = String(parseInt(numericValue, 10));
-		const paddedValue = cleanedValue.padStart(3, "0");
-		const formattedValue = paddedValue.slice(0, -2) + "." + paddedValue.slice(-2);
-		return formattedValue;
-	}
-
-	function handleBillTotalChange(value) {
-		const formattedValue = formatToCurrency(value);
-		setBillTotal(formattedValue);
-	}
-
-	function handleTipPercent(tipValue) {
-		setSelectedTipRound("N/A");
-		setSelectedTotalRound("N/A");
-		setCustomTipValue(20);
-		if (tipValue === "Custom") {
-			setTipPercent(20);
-		} else {
-			const tipValueRaw = tipValue.replace("%", "");
-			setTipPercent(Number(tipValueRaw));
-		}
-		setSelectedTipPercent(tipValue);
-	}
-
-	function handleTipRound(roundValue) {
-		setSelectedTipRound(roundValue);
-		setSelectedTotalRound("N/A");
-	}
-
-	function handleTotalRound(roundValue) {
-		setSelectedTotalRound(roundValue);
-		setSelectedTipRound("N/A");
-	}
-
-	function resetAll() {
-		setBillTotal("0.00");
-		setSelectedTipPercent("20%");
-		setSelectedTipRound("N/A");
-		setSelectedTotalRound("N/A");
-		setTipPercent(20);
-		setCustomTipValue(20);
-		setSplit(false);
-	}
-
-	useEffect(() => {
-		if (billTotal) {
-			let tipValue = billTotal * (tipPercent / 100);
-			let effectiveTipPercent = 0;
-
-			function decipherEffectiveTipPercent(tipValue) {
-				setSelectedTipPercent("Custom");
-				effectiveTipPercent = (tipValue / billTotal) * 100;
-				setCustomTipValue(effectiveTipPercent.toFixed(2));
-			}
-
-			switch (selectedTipRound) {
-				case "Up":
-					tipValue = Math.ceil(tipValue);
-					decipherEffectiveTipPercent(tipValue);
-					break;
-				case "Down":
-					tipValue = Math.floor(tipValue);
-					decipherEffectiveTipPercent(tipValue);
-					break;
-				default:
-					tipValue = Number(tipValue.toFixed(2));
-					break;
-			}
-
-			let totalValue = Number(billTotal) + tipValue;
-
-			switch (selectedTotalRound) {
-				case "Up":
-					totalValue = Math.ceil(totalValue);
-					tipValue = totalValue - billTotal;
-					decipherEffectiveTipPercent(tipValue);
-					break;
-				case "Down":
-					totalValue = Math.floor(totalValue);
-					tipValue = totalValue - billTotal;
-					decipherEffectiveTipPercent(tipValue);
-					break;
-				default:
-					totalValue = Number(totalValue.toFixed(2));
-					break;
-			}
-
-			setTip(tipValue.toFixed(2));
-			setTotal(totalValue.toFixed(2));
-		}
-	}, [billTotal, tipPercent, selectedTipRound, selectedTotalRound]);
+	// Calculations Custom Hook
+	useCalculateTip(LO, billTotal, tipPercent, selectedTipRound, selectedTotalRound, setTip, setTotal, setSelectedTipPercent, setCustomTipValue);
 
 	return (
-		<>
-			<h1 style={{ margin: "20px" }}>Just The Tip</h1>
+		<CustomProvider theme={theme.toLocaleLowerCase()}>
+			{/* Title */}
+			<h2 style={{ margin: "20px", textAlign: "center" }}>{LO.title}</h2>
+
+			{/* Primary card */}
 			<Panel bordered>
 				<Stack spacing={1} direction="column" alignItems="stretch">
-					<label>Bill Total:</label>
-					<InputGroup style={styles} className="rs-editable">
+					<label>{LO.billTotal}:</label>
+					<InputGroup style={{ marginBottom: 10 }} className="rs-editable">
 						<InputGroup.Addon>$</InputGroup.Addon>
-						<Input value={billTotal} onChange={(value) => handleBillTotalChange(value)} />
+						<Input
+							inputMode="decimal"
+							pattern="\d*\.?\d{0,2}"
+							value={billTotal}
+							onChange={(value) => handle.handleBillTotalChange(value)}
+							onKeyDown={handle.handleClosingKeyboard}
+						/>
 					</InputGroup>
-					<label>Tip %:</label>
-					<ButtonGroup style={styles} justified>
-						{tipValues.map((tipValue) => (
-							<Button key={tipValue} active={selectedTipPercent === tipValue} onClick={() => handleTipPercent(tipValue)}>
+					<label>{LO.tipPercent}:</label>
+					<ButtonGroup style={{ marginBottom: 10 }} justified>
+						{LO.tipValues.map((tipValue) => (
+							<Button key={tipValue} active={selectedTipPercent === tipValue} onClick={() => handle.handleTipPercent(tipValue)}>
 								{tipValue}
 							</Button>
 						))}
+						<Button active={selectedTipPercent === "Custom"} onClick={() => handle.handleTipPercent("Custom")}>
+							<MoreIcon style={{ fontSize: "1.5em" }} />
+						</Button>
 					</ButtonGroup>
 					{selectedTipPercent === "Custom" && (
 						<InputNumber
-							disabled={selectedTipRound !== "N/A" || selectedTotalRound !== "N/A"}
-							style={styles}
+							disabled={selectedTipRound !== LO.roundValues[0] || selectedTotalRound !== LO.roundValues[0]}
+							style={{ marginBottom: 10 }}
 							postfix="%"
 							defaultValue={20}
 							value={customTipValue || ""}
@@ -145,34 +93,60 @@ export default function Jtt() {
 								setTipPercent(Number(value));
 								setCustomTipValue(value);
 							}}
+							onKeyDown={handle.handleClosingKeyboard}
+							onKeyUp={handle.handleClosingKeyboard}
 						/>
 					)}
-					<label>Round Tip:</label>
-					<ButtonGroup style={styles} justified>
-						{roundValues.map((roundValue) => (
-							<Button key={roundValue} active={selectedTipRound === roundValue} onClick={() => handleTipRound(roundValue)}>
+					<label>{LO.roundTip}:</label>
+					<ButtonGroup style={{ marginBottom: 10 }} justified>
+						{LO.roundValues.map((roundValue) => (
+							<Button key={roundValue} active={selectedTipRound === roundValue} onClick={() => handle.handleTipRound(roundValue)}>
 								{roundValue}
 							</Button>
 						))}
 					</ButtonGroup>
-					<label>Round Total:</label>
-					<ButtonGroup style={styles} justified>
-						{roundValues.map((roundValue) => (
-							<Button key={roundValue} active={selectedTotalRound === roundValue} onClick={() => handleTotalRound(roundValue)}>
+					<label>{LO.roundTotal}:</label>
+					<ButtonGroup style={{ marginBottom: 10 }} justified>
+						{LO.roundValues.map((roundValue) => (
+							<Button key={roundValue} active={selectedTotalRound === roundValue} onClick={() => handle.handleTotalRound(roundValue)}>
 								{roundValue}
 							</Button>
 						))}
 					</ButtonGroup>
-					<label>Tip:</label>
-					<Input style={styles} readOnly value={tip ? `$ ${tip}` : ""} />
-					<label>Total:</label>
-					<Input style={styles} readOnly value={total ? `$ ${total}` : ""} />
+					<label>{LO.tip}:</label>
+					<Input style={{ marginBottom: 10 }} readOnly value={tip ? `$ ${tip}` : ""} className="rs-input-highlighted" />
+					<label>{LO.total}:</label>
+					<Input style={{ marginBottom: 10 }} readOnly value={total ? `$ ${total}` : ""} className="rs-input-highlighted" />
 				</Stack>
 			</Panel>
-			<Split split={split} setSplit={setSplit} />
-			<Button style={{ marginTop: "20px", marginBottom: "20px" }} appearance="default" block onClick={resetAll}>
-				Reset
-			</Button>
-		</>
+
+			{/* Split card */}
+			<Split
+				LO={LO}
+				showSplit={showSplit}
+				setShowSplit={setShowSplit}
+				splitValue={splitValue}
+				setSplitValue={setSplitValue}
+				tip={tip}
+				total={total}
+			/>
+
+			{/* Icon button group */}
+			<IconBtns setOpen={setShowMenu} LO={LO} resetAll={handle.handleResetAll} />
+
+			{/* Store buttons */}
+			<StoreBtns />
+
+			{/* Menu */}
+			<Menu
+				open={showMenu}
+				setOpen={setShowMenu}
+				LO={LO}
+				theme={theme}
+				setTheme={setTheme}
+				localizations={localizations}
+				setSelectedLocalization={setSelectedLocalization}
+			/>
+		</CustomProvider>
 	);
 }
