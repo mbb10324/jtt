@@ -1,5 +1,5 @@
 import { Input, Panel, Slider, Stack, Toggle } from "rsuite";
-import useSlider from "../Hooks/Slider";
+import useSlider from "../../Hooks/Slider";
 
 export default function Split({ LO, showSplit, setShowSplit, splitValue, setSplitValue, tip, total }) {
 	const { rangeSliderRef, handleTouchMove } = useSlider(setSplitValue);
@@ -8,7 +8,12 @@ export default function Split({ LO, showSplit, setShowSplit, splitValue, setSpli
 		<>
 			<Panel bordered style={{ marginTop: "20px" }}>
 				<label style={{ marginRight: "20px" }}>{LO.split}</label>
-				<Toggle checked={showSplit} checkedChildren={LO.yes} unCheckedChildren={LO.no} onChange={() => setShowSplit(!showSplit)} />
+				<Toggle
+					checked={showSplit}
+					checkedChildren={LO.yes}
+					unCheckedChildren={LO.no}
+					onChange={() => setShowSplit(!showSplit)}
+				/>
 				{showSplit && (
 					<div className="fade-in">
 						<Stack spacing={1} direction="column" alignItems="stretch" style={{ marginTop: 20 }}>
