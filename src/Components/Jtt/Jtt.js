@@ -12,7 +12,7 @@ import Split from "./Split";
 
 export default function Jtt({ theme, setTheme }) {
 	// Local storage values
-	const localStorageLocalization = localStorage.getItem("localization") || "English";
+	const localStorageLocalization = localStorage.getItem("jttLocalization") || "English";
 	// Util values
 	const [LO, setSelectedLocalization] = useState(localizations[localStorageLocalization.toLowerCase()]);
 	const [showMenu, setShowMenu] = useState(false);
@@ -45,17 +45,7 @@ export default function Jtt({ theme, setTheme }) {
 	);
 
 	// Calculations Custom Hook
-	useCalculateTip(
-		LO,
-		billTotal,
-		tipPercent,
-		selectedTipRound,
-		selectedTotalRound,
-		setTip,
-		setTotal,
-		setSelectedTipPercent,
-		setCustomTipValue
-	);
+	useCalculateTip(LO, billTotal, tipPercent, selectedTipRound, selectedTotalRound, setTip, setTotal, setSelectedTipPercent, setCustomTipValue);
 
 	return (
 		<div className="jtt-container">
@@ -79,11 +69,7 @@ export default function Jtt({ theme, setTheme }) {
 					<label>{LO.tipPercent}:</label>
 					<ButtonGroup style={{ marginBottom: 10 }} justified>
 						{LO.tipValues.map((tipValue) => (
-							<Button
-								key={tipValue}
-								active={selectedTipPercent === tipValue}
-								onClick={() => handle.handleTipPercent(tipValue)}
-							>
+							<Button key={tipValue} active={selectedTipPercent === tipValue} onClick={() => handle.handleTipPercent(tipValue)}>
 								{tipValue}
 							</Button>
 						))}
@@ -112,11 +98,7 @@ export default function Jtt({ theme, setTheme }) {
 					<label>{LO.roundTip}:</label>
 					<ButtonGroup style={{ marginBottom: 10 }} justified>
 						{LO.roundValues.map((roundValue) => (
-							<Button
-								key={roundValue}
-								active={selectedTipRound === roundValue}
-								onClick={() => handle.handleTipRound(roundValue)}
-							>
+							<Button key={roundValue} active={selectedTipRound === roundValue} onClick={() => handle.handleTipRound(roundValue)}>
 								{roundValue}
 							</Button>
 						))}
@@ -124,11 +106,7 @@ export default function Jtt({ theme, setTheme }) {
 					<label>{LO.roundTotal}:</label>
 					<ButtonGroup style={{ marginBottom: 10 }} justified>
 						{LO.roundValues.map((roundValue) => (
-							<Button
-								key={roundValue}
-								active={selectedTotalRound === roundValue}
-								onClick={() => handle.handleTotalRound(roundValue)}
-							>
+							<Button key={roundValue} active={selectedTotalRound === roundValue} onClick={() => handle.handleTotalRound(roundValue)}>
 								{roundValue}
 							</Button>
 						))}

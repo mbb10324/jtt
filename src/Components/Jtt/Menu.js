@@ -3,12 +3,12 @@ import { Drawer, Radio, RadioGroup } from "rsuite";
 export default function Menu({ open, setOpen, LO, theme, setTheme, localizations, setSelectedLocalization }) {
 	function handleUpdateTheme(theme) {
 		setTheme(theme);
-		localStorage.setItem("theme", theme);
+		localStorage.setItem("jttTheme", theme);
 	}
 
 	function handleUpdateLocalization(localization) {
 		setSelectedLocalization(localizations[localization.toLowerCase()]);
-		localStorage.setItem("localization", localization);
+		localStorage.setItem("jttLocalization", localization);
 	}
 
 	return (
