@@ -24,6 +24,7 @@ export const localizations = {
 		light: "Light",
 		highContrast: "High Contrast",
 		languageWord: "Language",
+		googlePlay: "Google Play",
 	},
 	spanish: {
 		language: "Spanish",

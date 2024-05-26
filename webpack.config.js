@@ -59,6 +59,7 @@ module.exports = {
 	devtool: "source-map",
 	// Establish development server
 	devServer: {
+		// host: "localhost",
 		// Specify port to run at
 		port: appPort,
 		// Catch 404 cases
@@ -78,5 +79,6 @@ module.exports = {
 	output: {
 		path: path.resolve(__dirname, "dist"),
 		clean: true,
+		publicPath: "/jtt/",
 	},
 };
