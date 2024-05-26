@@ -12,7 +12,6 @@
 	animation: fadeIn ease-in-out 0.8s;
 	overflow-x: hidden;
 	position: relative;
-	background-color: #0f131a !important;
 }
 
 .app h1 {
